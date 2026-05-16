@@ -32,7 +32,7 @@ let radiusScale;
 const map = new mapboxgl.Map({
   container: 'map',
   style: 'mapbox://styles/viprab/cmp7ykiyt007801sh2ebm7sr0',
-  center: [-71.09, 42.37],
+  center: [-71.09415, 42.36027],
   zoom: 11,
   minZoom: 5,
   maxZoom: 18,
@@ -47,10 +47,6 @@ function getCoords(station) {
 function formatTime(minutes) {
   const date = new Date(0, 0, 0, 0, minutes);
   return date.toLocaleString('en-US', { timeStyle: 'short' });
-}
-
-function minutesSinceMidnight(date) {
-  return date.getHours() * 60 + date.getMinutes();
 }
 
 function filterByMinute(tripsByMinute, minute) {
@@ -150,8 +146,6 @@ map.on('load', async () => {
     paint: bikeLanePaint,
   });
 
-
-
   let jsonData;
   try {
     jsonData = await d3.json(BLUEBIKES_STATIONS_JSON);
@@ -167,8 +161,10 @@ map.on('load', async () => {
   let trips;
   try {
     trips = await d3.csv(BLUEBIKES_TRAFFIC_CSV, (trip) => {
-      trip.started_at = new Date(trip.started_at);
-      trip.ended_at = new Date(trip.ended_at);
+      trip.startedMinutes =
+        +trip.started_at.slice(11, 13) * 60 + +trip.started_at.slice(14, 16);
+      trip.endedMinutes =
+        +trip.ended_at.slice(11, 13) * 60 + +trip.ended_at.slice(14, 16);
       return trip;
     });
   } catch (error) {
@@ -180,10 +176,8 @@ map.on('load', async () => {
   arrivalsByMinute = Array.from({ length: 1440 }, () => []);
 
   for (const trip of trips) {
-    const startedMinutes = minutesSinceMidnight(trip.started_at);
-    const endedMinutes = minutesSinceMidnight(trip.ended_at);
-    departuresByMinute[startedMinutes].push(trip);
-    arrivalsByMinute[endedMinutes].push(trip);
+    departuresByMinute[trip.startedMinutes].push(trip);
+    arrivalsByMinute[trip.endedMinutes].push(trip);
   }
 
   stations = computeStationTraffic(stations, -1);
