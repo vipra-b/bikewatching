@@ -96,6 +96,8 @@ function updateScatterPlot(tf) {
 
   const filteredStations = computeStationTraffic(stations, tf);
 
+  const tooltip = document.querySelector('#tooltip');
+
   circles = svg
     .selectAll('circle')
     .data(filteredStations, (d) => d.short_name)
@@ -107,13 +109,18 @@ function updateScatterPlot(tf) {
     .style('--departure-ratio', (d) =>
       stationFlow(d.totalTraffic ? d.departures / d.totalTraffic : 0.5),
     )
-    .each(function (d) {
-      d3.select(this).selectAll('title').remove();
-      d3.select(this)
-        .append('title')
-        .text(
-          `${d.totalTraffic} trips (${d.departures} departures, ${d.arrivals} arrivals)`,
-        );
+    .on('mouseenter', (event, d) => {
+      tooltip.textContent = `${d.totalTraffic} trips (${d.departures} departures, ${d.arrivals} arrivals)`;
+      tooltip.classList.add('visible');
+      tooltip.setAttribute('aria-hidden', 'false');
+    })
+    .on('mousemove', (event) => {
+      tooltip.style.left = `${event.clientX + 12}px`;
+      tooltip.style.top = `${event.clientY + 12}px`;
+    })
+    .on('mouseleave', () => {
+      tooltip.classList.remove('visible');
+      tooltip.setAttribute('aria-hidden', 'true');
     });
 
   updatePositions();
