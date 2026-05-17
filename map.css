@@ -25,7 +25,14 @@
     var(--color-departures) calc(100% * var(--departure-ratio)),
     var(--color-arrivals)
   );
+}
+
+#map svg circle {
   fill: var(--color);
+}
+
+.legend > div {
+  background: var(--color);
 }
 
 #map svg circle {
