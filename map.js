@@ -1,5 +1,5 @@
 import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm';
-import mapboxgl from 'https://cdn.jsdelivr.net/npm/mapbox-gl@2.15.0/+esm';
+import mapboxgl from 'https://cdn.jsdelivr.net/npm/mapbox-gl@3.8.0/+esm';
 
 const BLUEBIKES_STATIONS_JSON =
   'https://dsc106.com/labs/lab07/data/bluebikes-stations.json';
@@ -31,7 +31,7 @@ let radiusScale;
 
 const map = new mapboxgl.Map({
   container: 'map',
-  style: 'mapbox://styles/viprab/cmp7ykiyt007801sh2ebm7sr0',
+  style: 'mapbox://styles/viprab/cmp93j5vh008101sheezk2cqv',
   center: [-71.09415, 42.36027],
   zoom: 11,
   minZoom: 5,
